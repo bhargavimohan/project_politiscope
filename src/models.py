@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, ValidationError
 
 class UserCreate(BaseModel):
-    name: str = Field(..., case_sensitive=False)
+    name: str
     email: EmailStr
     password: str

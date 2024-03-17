@@ -22,7 +22,7 @@ engine = create_engine(DATABASE_URL, echo=False)
 Session = scoped_session(sessionmaker(bind=engine))
 
 
-class MainCategory(Base):
+class Users(Base):
     __tablename__ = 't_users' 
 
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -1,0 +1,5 @@
+{
+    "python.defaultInterpreterPath": "/home/politiscopevenv/bin/python3.10",
+    "python.envFile": "${workspaceFolder}/.vscode/.env",
+    
+ }

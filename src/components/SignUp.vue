@@ -12,15 +12,45 @@
       <input class="orange" type="text" placeholder="Enter Name">
       <input class="white" type="text" placeholder="Enter Email">
       <input class="green" type="text" placeholder="Enter Password">
-      <button>Sign Up</button>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'SignUp'
+      <button @click="submitForm">Sign Up</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: ''
+    };
+  },
+  methods: {
+    submitForm() {
+      fetch('http://127.0.0.1:8001/users/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        // Optionally, navigate to another page or show success message
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle error, show error message, etc.
+      });
+    }
   }
-  </script>
+};
+</script>
 
 <style> 
 

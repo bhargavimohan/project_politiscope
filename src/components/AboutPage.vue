@@ -2,12 +2,14 @@
     <!-- <h1>Hello User! This is your home page</h1> -->
   <!-- Background overlay -->
 
-  <div class="background-overlay"></div>
   
   <!-- Navbar -->
   <nav class="navbar">
-    <router-link to="/signup">Sign Up</router-link>
-  <router-link to="/login">Login</router-link>
+    <router-link to="/politiscope">PolitiScope</router-link>
+    <router-link to="/myaccount">My account</router-link>
+    <router-link to="/about"><b><u>About</u></b></router-link>
+    <router-link to="/infocenter">Info</router-link>
+    <router-link to="/logout">Log out</router-link>
   </nav>
 
 </template>
@@ -15,28 +17,13 @@
 <script>
 
 export default {
-    name: 'HomePage'
+    name: 'AboutPage'
 }
 </script>
 
 <style>
     
-    /* Whitening effect */
-    .background-overlay {
-      margin: 0;
-      padding: 0;
-      background-image: url('../assets/POLITISCOPE-removebg.png'); /* Replace 'background.jpg' with your image path */
-      background-size: 73%;
-      background-position: 300px;
-      height: 88vh;
-      overflow: hidden;
-      position: absolute;
-      top: -12px;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.5;
-    }
+   
     
     /* Navbar styling */
     .navbar {

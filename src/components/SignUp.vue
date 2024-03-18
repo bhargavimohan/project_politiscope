@@ -1,23 +1,22 @@
 <!-- Signup.vue -->
 <template>
   <div>
-    <img class="image" src="../assets/politiscopev1nobg.png"/>
+    <img class="image" src="../assets/POLITISCOPE-removebg.png"/>
   </div>
-<!-- 
-  <div class="heading">
-    <h5>Create a new Politiscope account</h5>
-  </div> -->
+
   <div class="sign-up">
-    <h5>Create a new Politiscope account or <router-link to="/login" class="roter-login">Login </router-link></h5> 
+    <h5>Create a new Politiscope account</h5> 
     <input class="orange" v-model="name" type="text" placeholder="Enter Name">
     <input class="white" v-model="email" type="text" placeholder="Enter Email">
     <input class="green" v-model="password" type="password" placeholder="Enter Password">
     <button v-on:click="signupForm">Sign Up</button>
+    <h5>Already have an account? <router-link to="/login" class="roter-login">Login</router-link></h5>
 </div>
 
 </template>
 
 <script>
+
 export default {
 data() {
   return {
@@ -26,8 +25,10 @@ data() {
     password: ''
   };
 },
+
 methods: {
   signupForm() {
+    const userName = this.name; 
     fetch('http://127.0.0.1:8003/sign-up', {
       method: 'POST',
       headers: {
@@ -38,16 +39,23 @@ methods: {
         email: this.email,
         password: this.password,
       }),
-      
     })
     .then(response => {
     if (response && response.status === 200) {
       // Sign up was successful, display an alert
+      localStorage.setItem('username', userName );
       alert('Sign up successful!');
       
       // Redirect users to another page (e.g., using Vue Router)
-      this.$router.push('/another-page');
-    } else {
+      this.$router.push('/politiscope');
+    } 
+    else if (response.status === 400) {
+        // Handle HTTP 400 error (Bad Request)
+        console.log(response)
+        alert( this.email + " is already registered.");
+        this.$router.push('/login');
+    }
+    else {
       // Handle other response statuses or undefined response
       // For example, if you receive a non-200 status or the response is undefined,
       // you might want to display an error message or take appropriate action.
@@ -65,9 +73,9 @@ methods: {
 <style> 
 
 .image{
-width: 400px;
-margin-left: 300px;
-margin-top: -60px;
+width: 800px;
+margin-left: 100px;
+margin-top: -270px;
 display: flex;
 justify-content: center; /* Horizontally center the content */
 align-items: center; /* Vertically center the content */
@@ -83,9 +91,8 @@ color: black; /* Set the font color */
 
 .sign-up{
 position: relative;
-margin-left: 450px;
+margin-left: 550px;
 margin-top: 200px;
-
 }
 .orange{
 width: 300px;
@@ -97,8 +104,7 @@ width: 300px;
   margin-left: auto;
   border: 1px ;
   background-color: rgb(246, 165, 58);
-  color: black;
-  
+  color: black;   
 }
 
 .white{

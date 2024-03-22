@@ -41,7 +41,9 @@ export default {
         // Sign up was successful, display an alert
         alert('Login successful!');
         // Redirect users to another page (e.g., using Vue Router)
-        localStorage.setItem('username' , response.data);
+        sessionStorage.setItem('username' , response.data['username']);
+        sessionStorage.setItem('email' , response.data['email']);
+        
         this.$router.push('/politiscope');
       } 
     })

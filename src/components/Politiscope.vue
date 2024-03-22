@@ -1,61 +1,148 @@
 <template>
-    <!-- <h1>Hello User! This is your home page</h1> -->
-  <!-- Background overlay -->
+  <!-- <h1>Hello User! This is your home page</h1> -->
+<!-- Background overlay -->
 
-  
-  <!-- Navbar -->
-  <nav class="navbar">
-    <router-link to="/politiscope"><b><u>Politiscope</u></b></router-link>
-    <router-link to="/myaccount">My account</router-link>
-    <router-link to="/about">About</router-link>
-    <router-link to="/infocenter">Info</router-link>
-    <router-link to="/logout">Log out</router-link>
-  </nav>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <router-link to="/politiscope"><b><u>Politiscope</u></b></router-link>
+  <router-link to="/myaccount">My account</router-link>
+  <router-link to="/about">About</router-link>
+  <router-link to="/infocenter">Info</router-link>
+  <router-link to="/logout">Log out</router-link>
+</nav>
+
+<div class="heading">
+  <h3>{{ message }}</h3>
+</div>
+
+<!-- <div v-if="!dateOfBirthStored"> -->
+    <div class="input-container">
+      <input class="day" type="text" v-model="day" placeholder="Day" maxlength="2">
+      <input class="month" type="text" v-model="month" placeholder="Month" maxlength="2">
+      <input class="year" type="text" v-model="year" placeholder="Year" maxlength="4">
+    </div>
+    <button class="save" @click="saveDateOfBirth">Save</button>
+  <!-- </div> -->
 
 </template>
 
 <script>
-
+import axios from 'axios';
 export default {
-  mounted() {
-const userName = localStorage.getItem('username');
-if (userName) {
-  console.log(userName); // Output: User Name
-} else {
-  console.log('User name not found in local storage');
+data() {
+  return {
+    day: '',
+    month: '',
+    year: '',
+    dateOfBirth: ''
+  };
+},
+async created() {
+  const username = sessionStorage.getItem('username');    
+  this.message = `Hello ${username}, enter your Date Of Birth.`;
+},
+methods: {
+  async saveDateOfBirth() {
+    const email = sessionStorage.getItem('email'); // Or sessionStorage.getItem('username');
+    console.log(email)
+    const dateOfBirth = `${this.year}-${this.month.padStart(2, '0')}-${this.day.padStart(2, '0')}`;
+    await axios.post('http://127.0.0.1:8003/storedob', {  
+      email: email,
+      dateOfBirth : dateOfBirth},{
+      headers: {
+         'Content-Type': 'application/json', // Set Content-Type header to application/json
+    }
+})
+.then(response => {
+    if (response.status === 200) {
+      this.day = '';
+      this.month = '';
+      this.year = '';
+      alert("Processing results . . .")
+    } 
+  })
+  .catch(error => {
+     if (error.response.status === 404) {
+        // Handle HTTP 400 error (Bad Request) 
+        alert("Something went wrong");
+        this.$router.push('/signup');
+    } 
+  });
 }
-  }
-
 }
+};
 
 </script>
 
-<style>
-    
-   
-    
-    /* Navbar styling */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 100%;
-      background-color: #0b0b0b; /* Adjust navbar background color */
 
-    }
-    
-    /* Navbar links styling */
-    .navbar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #090909; /* Adjust link color */
-    }
-    
-    /* Navbar link hover effect */
-    .navbar a:hover {
-      background-color: #ede5e5; /* Adjust hover background color */
-      font-weight: bold;
-    }
-  </style>
+<style>
+  
+ 
+  
+/* Navbar styling */
+.navbar {
+position: fixed;
+top: 0;
+left: 0;
+width: 200px;
+height: 100%;
+background-color: #0b0b0b; /* Adjust navbar background color */
+
+}
+
+/* Navbar links styling */
+.navbar a {
+display: block;
+padding: 10px;
+text-decoration: none;
+color: #090909; /* Adjust link color */
+  }
+  
+/* Navbar link hover effect */
+.navbar a:hover {
+background-color: #ede5e5; /* Adjust hover background color */
+font-weight: bold;
+}
+
+.heading {
+font-size: 24px; /* Adjust the font size as needed */
+font-weight: bold; /* Add bold font weight */
+color: #333; /* Change the color to suit your design */
+padding-right: 600px;
+padding-bottom: 200px;
+position: relative;
+justify-content: left;
+}
+
+.day{
+width: 30px;
+  margin-right: 30px;
+  background: orange;
+  color: black;
+}
+
+.month{
+width: 50px;
+  margin-right: 30px;
+  background: white;
+  color: blue;
+}
+
+.year{
+width: 50px;
+  margin-right: 30px;
+  background:rgb(107, 209, 107);
+  color: black;
+}
+
+.save{
+width: 210px;
+height: 20px;
+margin-top: 30px;
+margin-right : 30px;
+cursor: pointer;
+background-color: white;
+}
+
+</style>

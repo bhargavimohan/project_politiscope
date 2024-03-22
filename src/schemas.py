@@ -29,3 +29,4 @@ class Users(Base):
     name = Column(String(collation='NOCASE'))
     email = Column(String(collation='NOCASE'), unique=True, index=True)
     password = Column(String)
+    DOB = Column(Date)

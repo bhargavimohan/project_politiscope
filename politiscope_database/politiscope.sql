@@ -10,3 +10,7 @@ DELETE FROM t_users;
 
 -- Reset the ID key
 DELETE FROM sqlite_sequence WHERE name = 't_users';
+
+
+ALTER TABLE t_users
+ADD COLUMN DOB TEXT;

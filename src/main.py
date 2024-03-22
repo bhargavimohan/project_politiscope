@@ -4,7 +4,7 @@ import random
 import os
 import asyncio
 from fastapi.responses import JSONResponse
-from models import UserCreate,UserAuth
+from models import UserCreate,UserAuth, DobModel
 from schemas import Users, Session
 from passlib.context import CryptContext
 
@@ -37,7 +37,21 @@ async def authenticate_user(signedupuser: UserAuth):
     # authentical pwd
     if not pwd_context.verify(signedupuser.password, loggedIn_user.password):
         raise HTTPException(status_code=401, detail="Invalid password")
-    return loggedIn_user.name
+    return {"username" : loggedIn_user.name, "email" :loggedIn_user.email}
+
+@app.post("/storedob")
+async def store_dob_in_db(DOB : DobModel):
+    user = Session.query(Users).filter_by(email=DOB.email).first()
+    if user:
+        # Update the date of birth (dob) for the user
+        user.DOB = DOB.dateOfBirth  # Replace '1990-01-01' with the actual date of birth
+        # Commit the changes
+        Session.add(user)
+        Session.commit()
+        return "Date of birth added successfully."
+    else:
+        return f"User with email {DOB.dateOfBirth} not found."
+
         
 
 # Add CORS middleware

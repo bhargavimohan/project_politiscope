@@ -16,14 +16,17 @@
   <h3>{{ message }}</h3>
 </div>
 
-<!-- <div v-if="!dateOfBirthStored"> -->
+<div v-if="!dobPresent">
     <div class="input-container">
       <input class="day" type="text" v-model="day" placeholder="Day" maxlength="2">
       <input class="month" type="text" v-model="month" placeholder="Month" maxlength="2">
       <input class="year" type="text" v-model="year" placeholder="Year" maxlength="4">
     </div>
     <button class="save" @click="saveDateOfBirth">Save</button>
-  <!-- </div> -->
+  </div>
+  <div v-else> <!-- Second View -->
+    
+  </div>
 
 </template>
 
@@ -35,20 +38,45 @@ data() {
     day: '',
     month: '',
     year: '',
-    dateOfBirth: ''
+    dateOfBirth: '',
+    dobPresent : false,
+    username : '',
+    email : ''
   };
 },
+mounted(){
+  this.username = sessionStorage.getItem('username');
+  this.email = sessionStorage.getItem('email');
+  this.checkDOB();
+},
 async created() {
-  const username = sessionStorage.getItem('username');    
-  this.message = `Hello ${username}, enter your Date Of Birth.`;
+  this.message = `Hello ${this.username}, enter your Date Of Birth.`;
 },
 methods: {
+  async checkDOB() {
+    // Make an Axios call to check if date of birth is present
+    await axios.post('http://127.0.0.1:8003/checkdob', {  
+      email: this.email},{
+      headers: {
+         'Content-Type': 'application/json', // Set Content-Type header to application/json
+    }
+  })
+    .then(response => {
+      if (response.status === 200) {
+        // Assuming your backend responds with a boolean indicating whether DOB is present or not
+        this.dobPresent = response.data;
+        this.message = `Hello ${this.username}, this is your Politiscope`;
+      }
+      })
+      .catch(error => {
+        console.error('Error checking date of birth:', error);
+        // Handle error accordingly
+      });
+  },
   async saveDateOfBirth() {
-    const email = sessionStorage.getItem('email'); // Or sessionStorage.getItem('username');
-    console.log(email)
     const dateOfBirth = `${this.year}-${this.month.padStart(2, '0')}-${this.day.padStart(2, '0')}`;
     await axios.post('http://127.0.0.1:8003/storedob', {  
-      email: email,
+      email: this.email,
       dateOfBirth : dateOfBirth},{
       headers: {
          'Content-Type': 'application/json', // Set Content-Type header to application/json
@@ -66,7 +94,6 @@ methods: {
      if (error.response.status === 404) {
         // Handle HTTP 400 error (Bad Request) 
         alert("Something went wrong");
-        this.$router.push('/signup');
     } 
   });
 }
@@ -77,72 +104,86 @@ methods: {
 
 
 <style>
-  
- 
-  
-/* Navbar styling */
-.navbar {
-position: fixed;
-top: 0;
-left: 0;
-width: 200px;
-height: 100%;
-background-color: #0b0b0b; /* Adjust navbar background color */
+.my-account {
+margin-left: 20px; /* Adjust as needed */
+}
+
+.update-buttons {
+margin-bottom: 20px; /* Add spacing between buttons and forms */
+}
+
+.update-buttons button {
+margin-right: 10px; /* Add spacing between buttons */
+}
+
+.update-form {
+margin-top: 20px; /* Add spacing between forms */
+margin-left: 20px;
+}
+
+.email{
+margin-right: 20px;
+width: 340px;
+height: 40px;
+}
+
+.old-password{
+width: 300px;
+  height: 40px;
+  padding-left: 20px;
+  display: block;
+  margin-bottom: 30px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.new-password{
+width: 300px;
+  height: 40px;
+  padding-left: 20px;
+  display: block;
+  margin-bottom: 30px;
+  margin-right: auto;
+  margin-left: auto;
 
 }
 
-/* Navbar links styling */
-.navbar a {
-display: block;
-padding: 10px;
-text-decoration: none;
-color: #090909; /* Adjust link color */
+.confirm-password{
+  width: 300px;
+  height: 40px;
+  padding-left: 20px;
+  display: block;
+  margin-bottom: 30px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.update-message {
+color: green; /* Set color for success message */
+margin-top: 10px; /* Add spacing below message */
+}
+  /* Navbar styling */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #0b0b0b; /* Adjust navbar background color */
+
   }
   
-/* Navbar link hover effect */
-.navbar a:hover {
-background-color: #ede5e5; /* Adjust hover background color */
-font-weight: bold;
-}
-
-.heading {
-font-size: 24px; /* Adjust the font size as needed */
-font-weight: bold; /* Add bold font weight */
-color: #333; /* Change the color to suit your design */
-padding-right: 600px;
-padding-bottom: 200px;
-position: relative;
-justify-content: left;
-}
-
-.day{
-width: 30px;
-  margin-right: 30px;
-  background: orange;
-  color: black;
-}
-
-.month{
-width: 50px;
-  margin-right: 30px;
-  background: white;
-  color: blue;
-}
-
-.year{
-width: 50px;
-  margin-right: 30px;
-  background:rgb(107, 209, 107);
-  color: black;
-}
-
-.save{
-width: 210px;
-height: 20px;
-margin-top: 30px;
-margin-right : 30px;
-cursor: pointer;
-background-color: white;
-}
-
+  /* Navbar links styling */
+  .navbar a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #f0ecec; /* Adjust link color */
+  }
+  
+  /* Navbar link hover effect */
+  .navbar a:hover {
+    background-color: #0b0b0b; /* Adjust hover background color */
+    font-weight: bold;
+  }
 </style>

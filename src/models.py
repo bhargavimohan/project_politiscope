@@ -21,3 +21,15 @@ class DobModel(BaseModel):
             if not min_date <= v <= max_date:
                 raise ValueError(f"Date must be between {min_date} and {max_date}")
             return v
+
+class CheckEmailDob(BaseModel):
+    email : EmailStr
+
+class UpdateEmailModel(BaseModel):
+    oldEmail : EmailStr
+    newEmail : EmailStr
+
+class UpdatePasswordModel(BaseModel):
+    currentEmail : EmailStr
+    newPassword : str
+     

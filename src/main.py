@@ -4,7 +4,7 @@ import random
 import os
 import asyncio
 from fastapi.responses import JSONResponse
-from models import UserCreate,UserAuth, DobModel
+from models import *
 from schemas import Users, Session
 from passlib.context import CryptContext
 
@@ -39,6 +39,15 @@ async def authenticate_user(signedupuser: UserAuth):
         raise HTTPException(status_code=401, detail="Invalid password")
     return {"username" : loggedIn_user.name, "email" :loggedIn_user.email}
 
+@app.post("/checkdob")
+async def check_dob( email : CheckEmailDob):
+    loggedIn_user = Session.query(Users).filter(Users.email == email.email).first()
+    try:
+        if loggedIn_user.DOB:
+            return True
+    except:
+        return False
+
 @app.post("/storedob")
 async def store_dob_in_db(DOB : DobModel):
     user = Session.query(Users).filter_by(email=DOB.email).first()
@@ -50,7 +59,34 @@ async def store_dob_in_db(DOB : DobModel):
         Session.commit()
         return "Date of birth added successfully."
     else:
-        return f"User with email {DOB.dateOfBirth} not found."
+        return f"User with email {DOB.email} not found."
+    
+@app.put("/update-email")
+async def update_email(updatedEmail : UpdateEmailModel):
+    user = Session.query(Users).filter_by(email=updatedEmail.oldEmail).first()
+    if user:
+        user.email = updatedEmail.newEmail
+        Session.add(user)
+        Session.commit()
+        return "Email ID Updated successfully"
+    else:
+        return "Something went wrong"
+
+@app.put("/update-password")
+async def update_email(updatedPassword : UpdatePasswordModel):
+    user = Session.query(Users).filter_by(email=updatedPassword.currentEmail).first()
+    if user:
+        hashed_new_password = pwd_context.hash(updatedPassword.newPassword)
+        user.password = hashed_new_password
+        Session.add(user)
+        Session.commit()
+        return "Password Updated successfully"
+    else:
+        return "Something went wrong"
+
+
+    
+
 
         
 
